@@ -1,0 +1,117 @@
+---
+- name: Install InfluxDB
+  hosts: raspberrypi
+  tasks:
+    - name: Add InfluxDB apt key
+      become: yes
+      apt_key:
+        url: https://repos.influxdata.com/influxdata-archive_compat.key
+        id: 9D539D90D3328DC7D6C8D3B9D8FF8E1F7DF8B07E
+        state: present
+        keyring: /etc/apt/trusted.gpg.d/influxdb.gpg
+
+    - name: Add InfluxDB apt repository
+      become: yes
+      apt_repository:
+        repo: 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdb.gpg] https://repos.influxdata.com/debian stable main'
+        state: present
+        filename: influxdata
+
+    - name: Install InfluxDB apt package
+      become: yes
+      apt:
+        name: influxdb2=2.4.0*
+        state: present
+        update_cache: yes
+
+- name: Install Grafana
+  hosts: raspberrypi
+  tasks:
+    - name: Add Grafana apt key
+      become: yes
+      apt_key:
+        url: https://apt.grafana.com/gpg.key
+        id: B53AE77BADB630A683046005963FA27710458545
+        state: present
+        keyring: /usr/share/keyrings/grafana.key
+
+    - name: Add Grafana apt repository
+      become: yes
+      apt_repository:
+        repo: 'deb [signed-by=/usr/share/keyrings/grafana.key] https://packages.grafana.com/oss/deb stable main'
+        state: present
+        filename: grafana
+
+    - name: Install Grafana apt package
+      become: yes
+      apt:
+        name: grafana=9.2.0
+        state: present
+        update_cache: yes
+
+- name: Setup virtual environment and install Python libraries
+  hosts: raspberrypi
+  tasks:
+    - name: Install Python3 venv package
+      become: yes
+      apt:
+        name: python3-venv
+        state: present
+
+    - name: Create virtual environment
+      become: yes
+      ansible.builtin.command:
+        cmd: python3 -m venv /home/pi/TempMonitoring/venv
+      args:
+        creates: /home/pi/TempMonitoring/venv/bin/activate
+
+    - name: Install required Python libraries in virtual environment
+      become: yes
+      pip:
+        virtualenv: /home/pi/TempMonitoring/venv
+        name:
+          - board
+          - adafruit-circuitpython-dht
+          - RPLCD
+          - smbus2
+          - requests
+          - influxdb
+          - influxdb-client
+          - grafana-api
+          - toml
+        state: present
+
+- name: Configure services
+  hosts: raspberrypi
+  tasks:
+    - name: Start InfluxDB
+      become: yes
+      ansible.builtin.systemd:
+        enabled: yes
+        state: restarted
+        name: influxdb
+
+    - name: Start Grafana
+      become: yes
+      ansible.builtin.systemd:
+        enabled: yes
+        state: restarted
+        name: grafana-server
+
+- name: Copy and setup TempMonitoring.py script
+  hosts: raspberrypi
+  tasks:
+    - name: Copy TempMonitoring script
+      become: yes
+      ansible.builtin.copy:
+        src: TempMonitoring.py
+        dest: /home/pi/TempMonitoring/TempMonitoring.py
+
+    - name: Setup cron job for temperature monitoring
+      become: yes
+      lineinfile:
+        path: /var/spool/cron/crontabs/root
+        state: present
+        line: "*/2 * * * * /home/pi/TempMonitoring/venv/bin/python /home/pi/TempMonitoring/TempMonitoring.py >> /home/pi/TempMonitoring/monitoring.log 2>&1"
+
+   

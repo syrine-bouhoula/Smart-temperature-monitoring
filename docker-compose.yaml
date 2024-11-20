@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  ansible:
+    build: .
+    environment:
+      - CRON
+      - HOST
+      - SSH_KEY
+      - SSH_USER
+    image: custom-ansible-image:latest
+    network_mode: host
+    volumes:
+      - ${SSH_KEY}:/root/.ssh/pi-key
+      - ./inventory.yaml:/root/playbook/inventory.yaml
+      - ./playbook.yaml:/root/playbook/playbook.yaml
+      - ./TempMonitoring.py:/root/playbook/TempMonitoring.py
