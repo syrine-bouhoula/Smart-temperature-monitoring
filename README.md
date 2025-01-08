@@ -37,7 +37,6 @@ Tested on **Raspberry Pi OS Lite (64-bit)** with a **Raspberry Pi 4 Model B**.
 1. **InfluxDB v2.4.0** – Time-series database to store sensor data  
 2. **Grafana v9.2.0** – Visualization and dashboards  
 3. **Cron job** – Automates the speedtest script execution  
-4. **Speedtest CLI v1.2.0** – Tests internet speed  
 5. **influxdb-client-python v1.33.0** – Python client for InfluxDB  
 
 ---
