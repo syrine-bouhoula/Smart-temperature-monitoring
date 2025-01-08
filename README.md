@@ -21,14 +21,21 @@ Tested on **Raspberry Pi OS Lite (64-bit)** with a **Raspberry Pi 4 Model B**.
 
 ---
 
-## Requirements
+## Hardware Requirements
+
 - **Raspberry Pi 3 Model B+ or 4 Model B** (Gigabit-capable recommended)
-- **Docker** >= v20.10.17
-- **GNU Make** >= 4.3
-- **Raspberry Pi OS Lite (64-bit)** (recommended)
+- **DHT11 Temperature Sensor** (for monitoring indoor/outdoor temperature)
+- **LCD Screen** (e.g., a 16x2 or 20x4 LCD with I2C or parallel interface) to display the temperature readings
 
 ---
 
+## Software Requirements
+
+- **Docker** >= v20.10.17  
+- **GNU Make** >= 4.3  
+- **Raspberry Pi OS Lite (64-bit)** (recommended)
+  
+---
 ## Services Installed
 1. **InfluxDB v2.4.0** – Time-series database to store sensor data  
 2. **Grafana v9.2.0** – Visualization and dashboards  
@@ -87,7 +94,7 @@ These libraries enable interaction with sensors (e.g., DHT for temperature), LCD
      - `SSH_USER=pi`  
      - `SSH_KEY=~/.ssh/id_rsa`  
      - `CRON='*/30 * * * *'` (Runs speedtest every 30 minutes)
-
+example: make HOST='192.168.0.57' SSH_USER='pi' SSH_KEY='~/.ssh/pi-key' CRON='*/10 * * * * /home/pi/TempMonitoring/venv/bin/python /home/pi/TempMonitoring/TempMonitoring.py >> /home/pi/TempMonitoring/monitoring.log 2>&1' provision
 ---
 
 ## Usage
@@ -98,21 +105,19 @@ Once the provisioning is complete:
    - InfluxDB v2.4.0 is accessible on the default port `8086`.
 
 2. **Access Grafana**  
-   - Grafana v9.2.0 is accessible on the default port `3000`.
+   - Grafana v9.2.0 is accessible on the default port `3000`.  
    - Log in to Grafana to create or import dashboards for viewing temperature and speedtest metrics.
 
-3. **Speedtest Cron Job**  
-   - The cron job automatically runs `speedtest.py` at the interval set by the `CRON` parameter.
-   - Speedtest results are stored in InfluxDB for visualization in Grafana.
-
-4. **Sensor Data Collection**  
-   - Python scripts use the installed libraries to collect indoor and outdoor temperature data.
-   - These readings are sent to InfluxDB at regular intervals (as configured in the Ansible playbook).
+3. **Sensor Data Collection & LCD Display**  
+   - Python scripts use the DHT11 to read indoor/outdoor temperature data.  
+   - Temperature readings are displayed on the **LCD screen** in real time.  
+   - Data is also sent to InfluxDB at regular intervals (as configured in the Ansible playbook).
 
 ---
-
 ## Customization Parameters
 
 You can override the defaults when running `make`:
 ```bash
 make HOST='my-pi.local' SSH_USER='myuser' SSH_KEY='/path/to/my_key' CRON='0 * * * *'
+
+
