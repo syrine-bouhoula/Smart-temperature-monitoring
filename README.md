@@ -2,9 +2,10 @@
 # Raspberry Pi Temperature Monitoring with Ansible and Docker
 
 This project provisions a Raspberry Pi (using Ansible in a Docker container) to monitor indoor and outdoor temperatures. It installs and configures a stack of services for data collection and visualization, including InfluxDB and Grafana. 
-![IMG_8869](https://github.com/user-attachments/assets/8e314bf3-e049-4ccb-b3b6-2e9d6d92c8e8)
 
 Tested on **Raspberry Pi OS Lite (64-bit)** with a **Raspberry Pi 4 Model B**.
+
+![IMG_8869](https://github.com/user-attachments/assets/8e314bf3-e049-4ccb-b3b6-2e9d6d92c8e8)
 
 ---
 
@@ -94,7 +95,7 @@ These libraries enable interaction with sensors (e.g., DHT for temperature), LCD
      - `SSH_USER=pi`  
      - `SSH_KEY=~/.ssh/id_rsa`  
      - `CRON='*/30 * * * *'` (Runs speedtest every 30 minutes)
-example: make HOST='192.168.0.57' SSH_USER='pi' SSH_KEY='~/.ssh/pi-key' CRON='*/10 * * * * /home/pi/TempMonitoring/venv/bin/python /home/pi/TempMonitoring/TempMonitoring.py >> /home/pi/TempMonitoring/monitoring.log 2>&1' provision
+- example: make HOST='192.168.0.57' SSH_USER='pi' SSH_KEY='~/.ssh/pi-key' CRON='*/10 * * * * /home/pi/TempMonitoring/venv/bin/python /home/pi/TempMonitoring/TempMonitoring.py >> /home/pi/TempMonitoring/monitoring.log 2>&1' provision
 ---
 
 ## Usage
