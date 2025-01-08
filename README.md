@@ -2,6 +2,7 @@
 # Raspberry Pi Temperature Monitoring with Ansible and Docker
 
 This project provisions a Raspberry Pi (using Ansible in a Docker container) to monitor indoor and outdoor temperature. It installs and configures a stack of services for data collection and visualization, including InfluxDB and Grafana. 
+![Uploading IMG_8869.jpeg…]()
 
 Tested on **Raspberry Pi OS Lite (64-bit)** with a **Raspberry Pi 4 Model B**.
 
